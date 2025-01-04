@@ -12,4 +12,6 @@
 #include<sa/user.h>
 #include<tc/folder.h>
 #include<tccore/item.h>
+#include<tccore/grm.h>
+#include<ae/dataset.h>
 
