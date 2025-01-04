@@ -69,7 +69,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 
 	//status = AOM_lock(NewDS);
 	status = AOM_refresh(NewDS, TRUE); //CHECKOUT THE DATASET
-	status = AE_import_named_ref(NewDS, "PDF_Reference", "G:\\My Drive\\FaithPLM\\Online Batch Recorded Sessions\\4. Customization\\ITK_Programming\\NameRefTest.pdf", "", SS_BINARY);
+	status = AE_import_named_ref(NewDS, "PDF_Reference", "G:\\My Drive\\FaithPLM\\Online Batch Recorded Sessions\\4. Customization\\ITK_Programming\\NameRefTest.pdf", "", SS_BINARY); // giving double backward slash in must(\\), if not given file will not import in dataset
 	status = AOM_save_without_extensions(NewDS);
 	status = AOM_refresh(NewDS, FALSE); // CHECKIN THE DATASET
 
