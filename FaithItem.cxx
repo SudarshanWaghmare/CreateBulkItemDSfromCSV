@@ -56,6 +56,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	char* MakeBuy;
 	char* DSpath;
 	char* UOM;
+	char* owner;
 	fp = fopen("G:\\My Drive\\FaithPLM\\Online Batch Recorded Sessions\\4. Customization\\ITK_Program Practice\\Batch_Utility\\20-30 KVA 300-350 C FRAME HAWKINS COOKER\\20-30 KVA 300-350 C FRAME HAWKINS COOKER BOM.csv", "a+");
 	printf("\nItem ID\t\tItem Name\tUOM\n");
 	while (fgets(fline, 500, fp)) {
@@ -63,6 +64,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		MakeBuy = strtok(NULL, ",");
 		UOM = strtok(NULL, ",");
 		DSpath = strtok(NULL, ",");
+		owner = strtok(NULL, ",");
 
 		//Item create
 		status = TCTYPE_ask_type("A3BHMakePart", &type);
@@ -101,7 +103,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		// place item to home folder		
 		status = FL_insert(NewFolder, NewItem, 999);
 		status = AOM_save_with_extensions(NewFolder);
-
+				 
 
 		// printing newly created item	
 		char* UOMvalue = NULL;
