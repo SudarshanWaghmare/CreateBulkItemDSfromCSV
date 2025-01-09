@@ -15,12 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FaithItem.cxx">
+    <ClCompile Include="CreateBulkItemDSfromCSV.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FaithItem.hxx">
+    <ClInclude Include="CreateBulkItemDSfromCSV.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
