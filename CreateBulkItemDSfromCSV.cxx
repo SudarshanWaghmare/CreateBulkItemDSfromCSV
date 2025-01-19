@@ -2,7 +2,6 @@
 
 int ITK_user_main(int 	argc, char* argv[]) {
 	printf("Utility started...\n");
-
 	tag_t type = NULLTAG;
 	tag_t create_input = NULLTAG;
 	tag_t NewItem = NULLTAG;
@@ -58,7 +57,6 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	status = SA_ask_user_home_folder(userTag, &Huser_folder);
 	status = FL_insert(Huser_folder, NewFolder, 999);
 	status = AOM_save_with_extensions(Huser_folder);
-
 
 	FILE* fp;
 	FILE* report;
