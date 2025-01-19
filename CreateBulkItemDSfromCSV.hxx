@@ -2,7 +2,6 @@
 #include<stdio.h>
 #include<conio.h>
 
-
 //ITK Header files
 #include<tc/tc_startup.h>
 #include<tcinit/tcinit.h>
@@ -14,6 +13,5 @@
 #include<tccore/item.h>
 #include<tccore/grm.h>
 #include<ae/dataset.h>
-
 #include<tccore/project.h>
 

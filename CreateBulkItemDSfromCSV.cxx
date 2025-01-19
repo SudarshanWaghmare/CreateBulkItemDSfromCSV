@@ -25,7 +25,6 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	tag_t relation_type = NULLTAG;
 	tag_t GRMrelation = NULLTAG;
 
-
 	// GRM relation creation--docx
 	tag_t Docxrelation_type = NULLTAG;
 	tag_t GRMrelationDocx = NULLTAG;
@@ -40,7 +39,6 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	char* group = ITK_ask_cli_argument("-g=");
 
 	status = ITK_init_module(userID, password, group);
-
 
 	if (status == ITK_ok) {
 		printf("Login Successful.\n");
@@ -81,9 +79,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	char* DSpath;
 	char* DocxDSPath;
 	char* owner;
-
 	char* Projvalue = NULL;
-
 	int NoOfItems = 0;
 
 	fp = fopen("G:\\My Drive\\FaithPLM\\Online Batch Recorded Sessions\\4. Customization\\ITK_Program Practice\\Batch_Utility\\20-30 KVA 300-350 C FRAME HAWKINS COOKER\\20-30 KVA 300-350 C FRAME HAWKINS COOKER BOM.csv", "a+");
@@ -123,7 +119,6 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = ITEM_ask_latest_rev(NewItem, &Item_rev);
 
 		// setting properties on item revision
-
 		status = AOM_lock(Item_rev);
 		status = AOM_set_value_string(Item_rev, "bh7_BHQualityCode", QualityCode);
 		status = AOM_set_value_logical(Item_rev, "bh7_Inhouse", inhouse);
@@ -178,11 +173,9 @@ int ITK_user_main(int 	argc, char* argv[]) {
 
 		//Assign Project
 		tag_t  project = NULLTAG;
-
 		if (strcmp(owner, userID) != 0) {
 			tag_t userTag = NULLTAG;
 			tag_t group_tag = NULLTAG;
-
 			status = SA_find_user2(owner, &userTag);
 			status = SA_find_group("dba", &group_tag);
 			status = AOM_set_ownership(NewItem, userTag, group_tag);
@@ -190,7 +183,6 @@ int ITK_user_main(int 	argc, char* argv[]) {
 			status = AOM_save_without_extensions(NewItem);
 			status = AOM_save_without_extensions(Item_rev);
 		}
-
 
 		if (strcmp(owner, userID) == 0) {
 			status = PROJ_find("Proj_IN", &project);
