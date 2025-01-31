@@ -48,7 +48,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 
 	status = TCTYPE_find_type("Folder", "Folder", &type);
 	status = TCTYPE_construct_create_input(type, &create_input);
-	status = AOM_set_value_string(create_input, "object_name", "Eng_PROJ_IN/US_Trck Auto");
+	status = AOM_set_value_string(create_input, "object_name", "Pillar_All Props");
 	status = TCTYPE_create_object(create_input, &NewFolder);
 	status = AOM_save_with_extensions(NewFolder);
 
@@ -77,10 +77,11 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	char* DSpath;
 	char* DocxDSPath;
 	char* owner;
+	char* Pillar;
 	char* Projvalue = NULL;
 	int NoOfItems = 0;
 
-	fp = fopen("G:\\My Drive\\FaithPLM\\Online Batch Recorded Sessions\\4. Customization\\ITK_Program Practice\\Batch_Utility\\20-30 KVA 300-350 C FRAME HAWKINS COOKER\\20-30 KVA 300-350 C FRAME HAWKINS COOKER BOM.csv", "a+");
+	fp = fopen("C:\\Users\\Sudar\\OneDrive\\Documents\\Baker Hughes\\20-30 KVA 300-350 C FRAME HAWKINS COOKER BOM.csv", "a+");
 	printf("\nItem ID\t\tItem Name\tUOM\n");
 
 	report = fopen("Bulk Item report.txt", "a+");
@@ -100,13 +101,14 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		modelType = strtok(NULL, ",");
 		OriginCounty = strtok(NULL, ",");
 		Plant = strtok(NULL, ",");
+		Pillar = strtok(NULL, ",");
 		SecuClass = strtok(NULL, ",");
 		DSpath = strtok(NULL, ",");
 		DocxDSPath = strtok(NULL, ",");
 		owner = strtok(NULL, "\n");
 
 		//Item create
-		status = TCTYPE_ask_type("BH7_BHPart", &type);
+		status = TCTYPE_ask_type("BH7_BHAssembly", &type);
 		status = TCTYPE_construct_create_input(type, &create_input);
 		status = AOM_set_value_string(create_input, "object_name", ItemName);
 		status = AOM_set_value_string(create_input, "uom_tag", UOM);
@@ -117,7 +119,8 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = ITEM_ask_latest_rev(NewItem, &Item_rev);
 
 		// setting properties on item revision
-		status = AOM_lock(Item_rev);
+		
+		status = AOM_lock(Item_rev);		
 		status = AOM_set_value_string(Item_rev, "bh7_BHQualityCode", QualityCode);
 		status = AOM_set_value_logical(Item_rev, "bh7_Inhouse", inhouse);
 		status = AOM_set_value_string(Item_rev, "bh7_MakeBuy", MakeBuy);
@@ -125,12 +128,14 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = AOM_set_value_string(Item_rev, "bh7_MfgDate", YOM);
 		status = AOM_set_value_string(Item_rev, "bh7_MfgTemp", mfgTemp);
 		status = AOM_set_value_string(Item_rev, "bh7_ModelType", modelType);
-		status = AOM_set_value_string(Item_rev, "bh7_OriginCountry", OriginCounty);
-		status = AOM_set_value_string(Item_rev, "bh7_PlantLocation", Plant);
+		status = AOM_set_value_string(Item_rev, "bh7_OriginCountry", OriginCounty);		
+		status = AOM_set_value_string(Item_rev, "bh7_PlantLocation", OriginCounty);		
+		status = AOM_set_value_string(Item_rev, "bh7_ManufacturingPlant", Plant);
+		status = AOM_set_value_string(Item_rev, "bh7_Pillar", Pillar);
 		status = AOM_set_value_string(Item_rev, "bh7_SecurityClassification", SecuClass);
-		status = AOM_save_with_extensions(Item_rev);
+		status = AOM_save_with_extensions(Item_rev);		
 		status = AOM_unlock(Item_rev);
-
+		
 		//Dataset create PDF
 		status = TCTYPE_find_type("PDF", "Dataset", &DStype);
 		status = TCTYPE_construct_create_input(DStype, &DScreate_input);
@@ -146,7 +151,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = AOM_save_with_extensions(DocxNewDS);
 
 		// GRM relation --pdf
-		status = GRM_find_relation_type("IMAN_specification", &relation_type);
+		status = GRM_find_relation_type("BH7_BHSpecification", &relation_type);
 		status = GRM_create_relation(Item_rev, NewDS, relation_type, NULLTAG, &GRMrelation);
 		status = GRM_save_relation(GRMrelation);
 		status = AOM_save_with_extensions(NewDS);
@@ -168,7 +173,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = AOM_save_without_extensions(DocxNewDS);
 		status = AOM_refresh(NewDS, FALSE); // CHECKIN THE DATASET				
 		status = AOM_refresh(DocxNewDS, FALSE); // CHECKin THE PDF DATASET
-
+	
 		//Assign Project
 		tag_t  project = NULLTAG;
 		if (strcmp(owner, userID) != 0) {
@@ -182,13 +187,20 @@ int ITK_user_main(int 	argc, char* argv[]) {
 			status = AOM_save_without_extensions(Item_rev);
 		}
 
-		if (strcmp(owner, userID) == 0) {
-			status = PROJ_find("Proj_IN", &project);
+		if (strcmp(Pillar, "Industrial") == 0) {
+			status = PROJ_find("BH-Industrial", &project);
 			status = PROJ_assign_objects(1, &project, 1, &NewItem);
 		}
-
-		if (strcmp(owner, userID) != 0) {
-			status = PROJ_find("Proj_US", &project);
+		else if (strcmp(Pillar, "Aerospace") != 0) {
+			status = PROJ_find("BH-Aerospace", &project);
+			status = PROJ_assign_objects(1, &project, 1, &NewItem);
+		}
+		else if (strcmp(Pillar, "Subsea") != 0) {
+			status = PROJ_find("BH-Subsea", &project);
+			status = PROJ_assign_objects(1, &project, 1, &NewItem);
+		}
+		else {
+			status = PROJ_find("BH-Test&Cal", &project);
 			status = PROJ_assign_objects(1, &project, 1, &NewItem);
 		}
 
@@ -205,6 +217,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 
 		//text report
 		//printf("%s\t%s\t%s\n", item_id, item_name, UOM_str);
+		
 		fputs(item_id, report);
 		fputs("\t", report);
 		fputs(UOM_str, report);
@@ -221,13 +234,13 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		fputs("\n", CSCReport);
 
 		printf("%s\t%s\t\t%s\t%s\n", item_id, Projvalue, UOM_str, item_name);
-
+		
 		MEM_free(item_id);
 		MEM_free(item_name);
 		MEM_free(UOM_str);
 		MEM_free(Projvalue);
 		NoOfItems++;
-	}
+	}	
 
 	fclose(fp);
 	fclose(report);
