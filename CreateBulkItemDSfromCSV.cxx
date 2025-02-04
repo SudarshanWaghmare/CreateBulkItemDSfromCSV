@@ -48,7 +48,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 
 	status = TCTYPE_find_type("Folder", "Folder", &type);
 	status = TCTYPE_construct_create_input(type, &create_input);
-	status = AOM_set_value_string(create_input, "object_name", "Pillar_All Props");
+	status = AOM_set_value_string(create_input, "object_name", "BOM Create");
 	status = TCTYPE_create_object(create_input, &NewFolder);
 	status = AOM_save_with_extensions(NewFolder);
 
@@ -61,7 +61,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	FILE* fp;
 	FILE* report;
 	FILE* CSCReport;
-	char fline[1500];
+	char fline[5000];
 	char* ItemName;
 	char* UOM;
 	char* QualityCode;
@@ -81,14 +81,14 @@ int ITK_user_main(int 	argc, char* argv[]) {
 	char* Projvalue = NULL;
 	int NoOfItems = 0;
 
-	fp = fopen("C:\\Users\\Sudar\\OneDrive\\Documents\\Baker Hughes\\20-30 KVA 300-350 C FRAME HAWKINS COOKER BOM.csv", "a+");
+	fp = fopen("C:\\Users\\Sudar\\source\\repos\\BOMCreate\\C FRAME HAWKINS COOKER\\C FRAME HAWKINS COOKER BOM Creation.csv", "a+");
 	printf("\nItem ID\t\tItem Name\tUOM\n");
 
 	report = fopen("Bulk Item report.txt", "a+");
 	fputs("\n\nItem ID\t\t UOM\t Item Name\t\n", report);
 	CSCReport = fopen("CSV_Bulk Item CSC report.csv", "a+");
 	fputs("Item ID, Project ID, Item Name\n", CSCReport);
-	while (fgets(fline, 1500, fp)) {
+	while (fgets(fline, sizeof(fline), fp)) {
 
 		ItemName = strtok(fline, ",");
 		UOM = strtok(NULL, ",");
@@ -108,19 +108,19 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		owner = strtok(NULL, "\n");
 
 		//Item create
-		status = TCTYPE_ask_type("BH7_BHAssembly", &type);
+		status = TCTYPE_ask_type("BH7_BHPart", &type);
 		status = TCTYPE_construct_create_input(type, &create_input);
 		status = AOM_set_value_string(create_input, "object_name", ItemName);
-		status = AOM_set_value_string(create_input, "uom_tag", UOM);
+		status = AOM_set_value_string(create_input, "bh7_Pillar", Pillar);
+		status = AOM_set_value_string(create_input, "uom_tag", UOM);		
 		status = TCTYPE_create_object(create_input, &NewItem);
 		status = AOM_save_with_extensions(NewItem);
 
 		//get latest Rev
 		status = ITEM_ask_latest_rev(NewItem, &Item_rev);
 
-		// setting properties on item revision
-		
-		status = AOM_lock(Item_rev);		
+		// setting properties on item revision	
+		status = AOM_refresh(Item_rev, TRUE);
 		status = AOM_set_value_string(Item_rev, "bh7_BHQualityCode", QualityCode);
 		status = AOM_set_value_logical(Item_rev, "bh7_Inhouse", inhouse);
 		status = AOM_set_value_string(Item_rev, "bh7_MakeBuy", MakeBuy);
@@ -130,11 +130,10 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = AOM_set_value_string(Item_rev, "bh7_ModelType", modelType);
 		status = AOM_set_value_string(Item_rev, "bh7_OriginCountry", OriginCounty);		
 		status = AOM_set_value_string(Item_rev, "bh7_PlantLocation", OriginCounty);		
-		status = AOM_set_value_string(Item_rev, "bh7_ManufacturingPlant", Plant);
-		status = AOM_set_value_string(Item_rev, "bh7_Pillar", Pillar);
+		status = AOM_set_value_string(Item_rev, "bh7_ManufacturingPlant", Plant);		
 		status = AOM_set_value_string(Item_rev, "bh7_SecurityClassification", SecuClass);
-		status = AOM_save_with_extensions(Item_rev);		
-		status = AOM_unlock(Item_rev);
+		status = AOM_save_with_extensions(Item_rev);	
+		status = AOM_refresh(Item_rev, FALSE);		
 		
 		//Dataset create PDF
 		status = TCTYPE_find_type("PDF", "Dataset", &DStype);
@@ -216,7 +215,7 @@ int ITK_user_main(int 	argc, char* argv[]) {
 		status = AOM_ask_value_string(NewItem, "project_ids", &Projvalue);
 
 		//text report
-		//printf("%s\t%s\t%s\n", item_id, item_name, UOM_str);
+		printf("%s\t%s\t%s\n", item_id, item_name, UOM_str);
 		
 		fputs(item_id, report);
 		fputs("\t", report);
